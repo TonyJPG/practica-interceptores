@@ -1,7 +1,13 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import {
+	HttpClient,
+	HttpErrorResponse,
+	HttpHeaders,
+	HttpParams,
+} from "@angular/common/http";
+import { Observable, throwError } from "rxjs";
+import { catchError, map } from "rxjs/operators";
+
 import { Datum, Response } from "../interfaces/response.interface";
 
 @Injectable({
@@ -19,7 +25,16 @@ export class UsuariosService {
 		});
 
 		return this.http
-			.get<Response>("https://reqres.in/api/user", { params, headers })
-			.pipe(map((resp) => resp.data));
+			.get<Response>("https://reqress.in/api/user", { params, headers })
+			.pipe(
+				map((resp) => resp.data),
+				catchError(this.manejarError)
+			);
+	}
+
+	manejarError(error: HttpErrorResponse): Observable<never> {
+		console.log("Sucedió un error.");
+		console.warn(error);
+		return throwError("Esto es el throwError");
 	}
 }
